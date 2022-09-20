@@ -11,7 +11,7 @@ response = orgClient.list_accounts()
 # comment this out when you are done analyzing the response
 # print(json.dumps(response, indent=4, sort_keys=True, default=str))
 for account in response['Accounts']:
-    print(account['Name'], account['Id'], account['Email'])
+    print(account['Name'], account['Id'], account['Email'], account['Status'])
 # Close the account with the ID you specify
 # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/organizations.html#Organizations.Client.remove_account_from_organization
 # Input the account id
@@ -26,4 +26,4 @@ response = orgClient.list_accounts()
 # comment this out when you are done analyzing the response
 # print(json.dumps(response, indent=4, sort_keys=True, default=str))
 for account in response['Accounts']:
-    print(account['Name'], account['Id'], account['Email'])
+    print(account['Name'], account['Id'], account['Email'], account['Status'])

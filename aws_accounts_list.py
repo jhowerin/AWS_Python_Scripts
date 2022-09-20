@@ -11,5 +11,5 @@ response = orgClient.list_accounts()
 print(json.dumps(response, indent=4, sort_keys=True, default=str))
 #print(response)
 for account in response['Accounts']:
-    print(account['Name'], account['Id'], account['Email'])
+    print(account['Name'], account['Id'], account['Email'], account['Status'])
     
