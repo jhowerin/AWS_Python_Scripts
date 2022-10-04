@@ -1,5 +1,4 @@
-<b>Python script to get all VM Names, IPs, and FDQN's from all AWS accounts in the Organization.</b>
-boto3 library<br>
+<b>Python script to get all VM Names, IPs, and FDQN's from all AWS accounts in the Organization.</b><br>
 Jake Howering<br>
 jhowerin@gmail.com<br>
 
