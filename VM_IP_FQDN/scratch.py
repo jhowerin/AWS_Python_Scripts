@@ -103,5 +103,3 @@ for account in response['Accounts']:
                                 print(f"Trying to access a <dict> with a missing key {missing_key}") 
             print("*****")
 print("******************************************************************")
-
-
