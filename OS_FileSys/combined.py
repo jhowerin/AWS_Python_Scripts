@@ -2,6 +2,7 @@ import argparse
 import boto3
 import json
 import sys
+import subprocess
 
 # Define functions
 
@@ -54,21 +55,34 @@ def get_file_systems(instance, ec2):
         file_systems.append((device_name, file_system_type, file_system_size))
     return file_systems
 
-def print_instance_info(account_id, region, instance, ec2):
-    instance_id = instance['InstanceId']
-    operating_system = get_operating_system(instance)
-    platform_details = get_platform_details(instance)
-    ami_name = get_ami_name(instance)
-    file_systems = get_file_systems(instance, ec2)
-    print(f"AWS Account: {account_id} (Region: {region})")
-    print(f"Instance ID: {instance_id}")
-    print(f"Operating System: {operating_system}")
-    if platform_details:
-        print(f"Platform Details: {platform_details}")
-    print(f"AMI Name: {ami_name}")
-    for device_name, file_system_type, file_system_size in file_systems:
-        print(f"File System ({device_name}): {file_system_type} ({file_system_size} GB)")
-    print()
+def ssh_into_instance(ip_address, ssh_key_path):
+    # SSH into the instance and run the command
+    ssh_cmd = f'ssh -i {ssh_key_path} ec2-user@{ip_address} df -T /'
+    output = subprocess.check_output(ssh_cmd, shell=True)
+    
+    # Parse the output of the df command to get the file system type
+    filesystem_type = output.decode().split('\n')[1].split()[1]
+    
+    # Return the file system type
+    return filesystem_type
+
+def print_instance_info(account_id, region, instance, ec2, ssh_key_path):
+   instance_id = instance['InstanceId']
+   operating_system = get_operating_system(instance)
+   platform_details = get_platform_details(instance)
+   ami_name = get_ami_name(instance)
+   file_systems = get_file_systems(instance, ec2)
+   print(f"AWS Account: {account_id} (Region: {region})")
+   print(f"Instance ID: {instance_id}")
+   print(f"Operating System: {operating_system}")
+   if platform_details:
+       print(f"Platform Details: {platform_details}")
+   print(f"AMI Name: {ami_name}")
+   for device_name, _, file_system_size in file_systems:
+       filesystem_type = ssh_into_instance(instance['PublicIpAddress'], ssh_key_path)
+       print(f"File System ({device_name}): {filesystem_type} ({file_system_size} GB)")
+   print()
+
 
 
 # Parse command line arguments
@@ -102,4 +116,4 @@ instances = get_ec2_instances(account_id, args.region, args.profile)
 
 # Loop through each instance in the response and print instance information
 for instance in instances:
-    print_instance_info(account_id, args.region, instance, ec2)
+    print_instance_info(account_id, args.region, instance, ec2, 'ec2-get-file-system.pem')
